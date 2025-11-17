@@ -27,11 +27,11 @@ const componentMap = {
   custom: CustomSection,
 };
 
-const initialSections = [
-  { id: 'summary', component: 'summary', props: {} },
-  { id: 'partA', component: 'partA', props: {} },
-  { id: 'partB', component: 'partB', props: {} },
-  { id: 'conclusion', component: 'conclusion', props: {} },
+const initialSections: { id: string; component: string; props: any, isDeletable: boolean }[] = [
+  { id: 'summary', component: 'summary', props: {}, isDeletable: true },
+  { id: 'partA', component: 'partA', props: {}, isDeletable: true },
+  { id: 'partB', component: 'partB', props: {}, isDeletable: true },
+  { id: 'conclusion', component: 'conclusion', props: {}, isDeletable: true },
 ];
 
 export default function ReportPage() {
@@ -59,8 +59,8 @@ export default function ReportPage() {
       props: {
         id: newSectionId,
         layout: type,
-        onDelete: () => deleteSection(newSectionId)
       },
+      isDeletable: true,
     };
     
     setSections(prev => [...prev, newSection]);
@@ -69,8 +69,10 @@ export default function ReportPage() {
     setReportData(prev => ({
         ...prev,
         [`${newSectionId}-title`]: "Custom Section Title",
+        // for separate layout
+        [newSectionId]: [],
+        // for overlay layout
         [`${newSectionId}-image`]: null,
-        [`${newSectionId}-text`]: "Editable text for your custom section.",
         [`${newSectionId}-overlays`]: [],
     }));
   };
@@ -135,15 +137,17 @@ export default function ReportPage() {
                 <GripVertical size={20} />
               </div>
 
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="absolute top-4 right-4 z-10 h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive opacity-0 group-hover/section:opacity-100 transition-opacity"
-                onClick={() => deleteSection(section.id)}
-                aria-label="Delete section"
-              >
-                  <Trash2 size={16}/>
-              </Button>
+              {section.isDeletable && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-4 right-4 z-10 h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive opacity-0 group-hover/section:opacity-100 transition-opacity"
+                  onClick={() => deleteSection(section.id)}
+                  aria-label="Delete section"
+                >
+                    <Trash2 size={16}/>
+                </Button>
+              )}
 
               <Component 
                 data={reportData} 

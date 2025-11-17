@@ -6,10 +6,9 @@ import { ReportState } from '@/lib/report-data';
 import EditableField from './EditableField';
 import ImageSlot from './ImageSlot';
 import { Button } from '@/components/ui/button';
-import { Text, Trash2, Rows, Columns, ArrowDown, ArrowUp, ArrowLeft, ArrowRight, PlusCircle } from 'lucide-react';
+import { Text, Trash2, ArrowDown, ArrowUp, ArrowLeft, ArrowRight, PlusCircle } from 'lucide-react';
 import DraggableText, { Overlay } from './DraggableText';
 import OverlayEditor from './OverlayEditor';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
@@ -137,7 +136,7 @@ export default function CustomSection({ id, layout, data, updateField }: CustomS
   
   const renderSeparateLayout = () => (
     <div className='flex flex-col gap-4'>
-        {items.map((item, itemIndex) => {
+        {items.map((item) => {
           const isGrid = item.layout === 'grid';
           const textOnSide = item.textPosition === 'left' || item.textPosition === 'right';
 
@@ -198,17 +197,17 @@ export default function CustomSection({ id, layout, data, updateField }: CustomS
               <div className='flex flex-wrap gap-2 items-center bg-secondary/30 p-2 rounded-lg'>
                   <Label className='text-xs font-semibold'>Layout:</Label>
                   <div className='flex items-center gap-1 border bg-background rounded-md p-0.5'>
-                    <Button size="sm" variant={item.layout === 'single' ? 'secondary' : 'ghost'} onClick={() => updateItem(item.id, {layout: 'single'})} className='h-7'>Single Image</Button>
+                    <Button size="sm" variant={item.layout === 'single' ? 'secondary' : 'ghost'} onClick={() => updateItem(item.id, {layout: 'single'})} className='h-7'>Single</Button>
                     <Button size="sm" variant={item.layout === 'grid' ? 'secondary' : 'ghost'} onClick={() => updateItem(item.id, {layout: 'grid'})} className='h-7'>Grid</Button>
                   </div>
                   {item.layout === 'grid' && (
                      <>
-                      <Label className='text-xs font-semibold ml-2'>Grid Columns:</Label>
+                      <Label className='text-xs font-semibold ml-2'>Cols:</Label>
                       <Input type="number" min={2} max={4} value={item.gridColumns} onChange={(e) => updateItem(item.id, {gridColumns: parseInt(e.target.value, 10) || 2})} className='w-16 h-8' />
                       <Button size="icon" variant="outline" onClick={() => addImageToItem(item.id)} className="h-8 w-8 ml-2"><PlusCircle size={16}/></Button>
                      </>
                   )}
-                  <Label className='text-xs font-semibold ml-auto'>Text Position:</Label>
+                  <Label className='text-xs font-semibold ml-auto'>Text Pos:</Label>
                   <div className='flex items-center gap-1 border bg-background rounded-md p-0.5'>
                       <Button size="icon" variant={item.textPosition === 'top' ? 'secondary' : 'ghost'} onClick={() => updateItem(item.id, {textPosition: 'top'})} className='h-7 w-7'><ArrowUp size={16}/></Button>
                       <Button size="icon" variant={item.textPosition === 'bottom' ? 'secondary' : 'ghost'} onClick={() => updateItem(item.id, {textPosition: 'bottom'})} className='h-7 w-7'><ArrowDown size={16}/></Button>
@@ -287,7 +286,7 @@ export default function CustomSection({ id, layout, data, updateField }: CustomS
 
   return (
     <div className="report-section" id={id}>
-      <EditableField id={sectionTitleKey} value={data[sectionTitleKey] || ''} onChange={updateField} className="text-lg font-bold text-primary mb-3" tag="h2"/>
+       <EditableField id={sectionTitleKey} value={data[sectionTitleKey] || ''} onChange={updateField} className="mb-3" tag="h2"/>
       
       {layout === 'overlay' ? renderOverlayLayout() : renderSeparateLayout()}
     </div>
