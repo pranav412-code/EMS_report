@@ -3,7 +3,6 @@
 import React from 'react';
 import { ReportState } from '@/lib/report-data';
 import EditableField from './EditableField';
-import AIAssistedInsightsButton from './AIAssistedInsightsButton';
 
 type ConclusionSectionProps = {
   data: ReportState;
@@ -12,16 +11,11 @@ type ConclusionSectionProps = {
   getChartDescriptions: () => string;
 };
 
-export default function ConclusionSection({ data, updateField, getReportTextContent, getChartDescriptions }: ConclusionSectionProps) {
+export default function ConclusionSection({ data, updateField }: ConclusionSectionProps) {
   return (
     <div className="report-section" id="conclusion">
       <div className='flex items-center justify-between'>
         <h2>✅ Conclusions</h2>
-        <AIAssistedInsightsButton 
-          onInsight={insight => updateField('conclusion', insight)}
-          getReportTextContent={getReportTextContent}
-          getChartDescriptions={getChartDescriptions}
-        />
       </div>
       <div className="chart-card">
         <div className="remarks h-full">

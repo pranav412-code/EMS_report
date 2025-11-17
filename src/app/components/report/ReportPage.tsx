@@ -51,18 +51,6 @@ export default function ReportPage() {
     }
   }, []);
 
-  const getReportTextContent = () => {
-    return Object.entries(reportData)
-      .filter(([key, value]) => typeof value === 'string' && !key.startsWith('composer-') && !value.startsWith('<'))
-      .map(([key, value]) => `${key.replace(/-/g, ' ')}: ${value}`)
-      .join('\n');
-  }
-
-  const getChartDescriptions = () => {
-    const chartKeys = Object.keys(reportData).filter(key => reportData[key] === null && !key.startsWith('composer'));
-    return chartKeys.map(key => key.replace(/-/g, ' ')).join(', ');
-  }
-
   const addSection = (type: 'overlay' | 'separate') => {
     const newSectionId = `custom-${Date.now()}`;
     const newSection = {
@@ -165,8 +153,6 @@ export default function ReportPage() {
               <Component 
                 data={reportData} 
                 updateField={updateField}
-                getReportTextContent={getReportTextContent}
-                getChartDescriptions={getChartDescriptions}
                 {...section.props}
               />
             </div>
