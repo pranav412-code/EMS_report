@@ -75,7 +75,6 @@ export default function ReportHeader({ data, updateField }: ReportHeaderProps) {
           <PopoverContent className="w-auto p-0" align="end">
             <Calendar
               initialFocus
-              initialFocus
               mode="range"
               defaultMonth={date?.from}
               selected={date}

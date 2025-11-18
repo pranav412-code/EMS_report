@@ -91,7 +91,7 @@
   }
 
   .meta-bar {
-    @apply flex flex-wrap gap-4 bg-primary/10 p-3 px-5 border-b;
+    @apply flex flex-wrap gap-4 bg-primary/5 p-3 px-5 border-b;
   }
 
   .meta-bar .logo-col {
