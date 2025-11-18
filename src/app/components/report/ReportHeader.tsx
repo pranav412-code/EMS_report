@@ -33,10 +33,10 @@ export default function ReportHeader({ data, updateField }: ReportHeaderProps) {
     <div className="report-header">
       <div>
         <h1>
-          <EditableField id="title" value={data.title} onChange={updateField} className="!font-bold" />
+          <EditableField id="title" value={data.title} onChange={updateField} className="!font-bold text-primary-foreground" />
         </h1>
         <div style={{ opacity: 0.95 }}>
-          <EditableField id="subTitle" value={data.subTitle} onChange={updateField} />
+          <EditableField id="subTitle" value={data.subTitle} onChange={updateField} className="text-primary-foreground" />
         </div>
       </div>
       <div className="right">
