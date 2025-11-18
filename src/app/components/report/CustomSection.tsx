@@ -278,16 +278,24 @@ export default function CustomSection({ id: sectionId, data, updateField }: Cust
     const BlockContainer = ({ children }: { children: React.ReactNode}) => (
        <div 
          className="block-container relative group/block my-2"
-         draggable
-         onDragStart={(e) => handleDragStart(e, block.id)}
          onDragOver={(e) => handleDragOver(e, path)}
        >
-        <div className="drag-handle-block"><GripVertical size={18} /></div>
-        <Button 
-            size="icon" variant="destructive" 
-            className="delete-handle-block"
-            onClick={() => deleteBlock(block.id)}
-        ><Trash2 className="w-4 h-4"/></Button>
+        <div className="block-toolbar" onMouseDown={e => e.stopPropagation()}>
+            <div 
+                className="drag-handle-block"
+                draggable
+                onDragStart={(e) => handleDragStart(e, block.id)}
+            >
+                <GripVertical size={16} />
+            </div>
+             <Button 
+                size="icon" variant="ghost" 
+                className="delete-handle-block"
+                onClick={() => deleteBlock(block.id)}
+             >
+                <Trash2 className="w-4 h-4"/>
+            </Button>
+        </div>
         {children}
       </div>
     );
@@ -458,26 +466,43 @@ export default function CustomSection({ id: sectionId, data, updateField }: Cust
 
 // Add some extra CSS for the new block editor handles
 const customStyles = `
-  .block-container .drag-handle-block, .block-container .delete-handle-block {
+  .block-toolbar {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: -12px;
+    right: 8px;
     z-index: 10;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
+    transform: translateY(4px);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background-color: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    padding: 2px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
-  .block-container:hover .drag-handle-block, .block-container:hover .delete-handle-block {
+  .block-container:hover .block-toolbar {
     opacity: 1;
+    transform: translateY(0);
   }
-  .block-container .drag-handle-block {
-    left: -28px;
+  .block-toolbar .drag-handle-block {
     cursor: move;
     color: hsl(var(--muted-foreground));
+    padding: 4px;
   }
-  .block-container .delete-handle-block {
-    right: -32px;
-    height: 2rem;
-    width: 2rem;
+  .block-toolbar .drag-handle-block:hover {
+      color: hsl(var(--foreground));
+  }
+  .block-toolbar .delete-handle-block {
+    height: 1.75rem;
+    width: 1.75rem;
+    color: hsl(var(--muted-foreground));
+  }
+  .block-toolbar .delete-handle-block:hover {
+      background-color: hsl(var(--destructive) / 0.1);
+      color: hsl(var(--destructive));
   }
   .editable-table td {
       outline: none;
