@@ -5,7 +5,7 @@ import { ReportState } from '@/lib/report-data';
 import EditableField from './EditableField';
 import ImageSlot from './ImageSlot';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Trash2, GripVertical, Columns, Image as ImageIcon, Pilcrow, Table } from 'lucide-react';
+import { PlusCircle, Trash2, GripVertical, Columns, Image as ImageIcon, Pilcrow, Table, Heading3 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,11 +17,11 @@ import { cn } from '@/lib/utils';
 // --- DATA STRUCTURES ---
 export type Block = {
   id: string;
-  type: 'text' | 'image_grid' | 'table' | 'layout';
-  // Text Block
+  type: 'text' | 'image_grid' | 'table' | 'layout' | 'subheader';
+  // Text Block / Subheader Block
   content?: string;
   // ImageGrid Block
-  images?: { id: string; src: string | null }[];
+  images?: { id: string; src: string | null; caption: string }[];
   gridColumns?: number;
   // Table Block
   tableData?: string[][];
@@ -36,8 +36,10 @@ const createNewBlock = (type: Block['type']): Block => {
   switch (type) {
     case 'text':
       return { id, type: 'text', content: 'Enter your text here...' };
+    case 'subheader':
+      return { id, type: 'subheader', content: 'Enter subheader text...' };
     case 'image_grid':
-      return { id, type: 'image_grid', images: [{ id: `img-${id}`, src: null }], gridColumns: 1 };
+      return { id, type: 'image_grid', images: [{ id: `img-${id}`, src: null, caption: '' }], gridColumns: 1 };
     case 'table':
       return { id, type: 'table', tableData: [['Header 1', 'Header 2'], ['Data 1', 'Data 2']] };
     case 'layout':
@@ -274,6 +276,7 @@ export default function CustomSection({ id: sectionId, data, updateField, isLock
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuItem onSelect={() => addBlock('text', parentPath)}><Pilcrow className='mr-2 h-4 w-4'/>Text</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => addBlock('subheader', parentPath)}><Heading3 className='mr-2 h-4 w-4'/>Subheader</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => addBlock('image_grid', parentPath)}><ImageIcon className='mr-2 h-4 w-4'/>Image Grid</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => addBlock('table', parentPath)}><Table className='mr-2 h-4 w-4'/>Table</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => addBlock('layout', parentPath)}><Columns className='mr-2 h-4 w-4'/>Columns (Layout)</DropdownMenuItem>
@@ -284,9 +287,9 @@ export default function CustomSection({ id: sectionId, data, updateField, isLock
 
   const renderBlock = (block: Block, path: number[]): React.ReactNode => {
     
-    const BlockContainer = ({ children }: { children: React.ReactNode}) => (
+    const BlockContainer = ({ children, className }: { children: React.ReactNode, className?: string}) => (
        <div 
-         className="block-container relative group/block my-2"
+         className={cn("block-container relative group/block my-2", className)}
          onDragOver={(e) => handleDragOver(e, path)}
        >
         {!isLocked && (
@@ -327,6 +330,20 @@ export default function CustomSection({ id: sectionId, data, updateField, isLock
             </div>
           </BlockContainer>
         );
+      case 'subheader':
+        return (
+          <BlockContainer key={block.id} className="my-3">
+              <EditableField
+                  id={`${block.id}-content`}
+                  value={block.content || ''}
+                  onChange={(_, value) => updateBlock(block.id, { content: value })}
+                  type="text"
+                  tag="h3"
+                  className="!text-base !font-semibold text-primary/90"
+                  disabled={isLocked}
+                />
+          </BlockContainer>
+        );
       case 'image_grid':
         return (
           <BlockContainer key={block.id}>
@@ -351,13 +368,30 @@ export default function CustomSection({ id: sectionId, data, updateField, isLock
                              updateBlock(block.id, { images: newImages });
                          }}><Trash2 className="w-4 h-4"/></Button>
                       )}
+                      {!isLocked && (
+                          <div className='p-1 pt-2'>
+                              <EditableField
+                                id={`${img.id}-caption`}
+                                value={img.caption || ''}
+                                onChange={(_, value) => {
+                                    const newImages = [...(block.images || [])];
+                                    newImages[index].caption = value;
+                                    updateBlock(block.id, { images: newImages });
+                                }}
+                                type="text"
+                                className="w-full text-xs text-center text-muted-foreground italic"
+                                placeholder="Add a caption..."
+                                disabled={isLocked}
+                              />
+                          </div>
+                      )}
                     </div>
                   ))}
                </div>
                {!isLocked && (
                  <div className='flex items-center gap-2 mt-3'>
                    <Button size="sm" variant="outline" onClick={() => {
-                       const newImages = [...(block.images || []), {id: `img-${Date.now()}`, src: null}];
+                       const newImages = [...(block.images || []), {id: `img-${Date.now()}`, src: null, caption: ''}];
                        updateBlock(block.id, {images: newImages});
                    }}><PlusCircle size={14} className='mr-2'/>Add Image</Button>
                    {block.images && block.images.length > 1 && (

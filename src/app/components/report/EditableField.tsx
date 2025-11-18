@@ -11,6 +11,7 @@ type EditableFieldProps = {
   className?: string;
   tag?: keyof JSX.IntrinsicElements;
   disabled?: boolean;
+  placeholder?: string;
 };
 
 const EditableField: React.FC<EditableFieldProps> = ({
@@ -21,6 +22,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
   className,
   tag = "div",
   disabled = false,
+  placeholder,
 }) => {
   const ref = useRef<any>(null);
 
@@ -61,6 +63,20 @@ const EditableField: React.FC<EditableFieldProps> = ({
     }
   };
 
+  if (type === 'text' && tag !== 'div') {
+      const Component = tag;
+      return (
+        <Component
+          contentEditable={!disabled}
+          suppressContentEditableWarning
+          onInput={handleInput}
+          onPaste={handlePaste}
+          className={cn("editable-field", disabled && "cursor-not-allowed", className)}
+          dangerouslySetInnerHTML={{ __html: value }}
+        />
+    );
+  }
+
 
   if (type === "richtext") {
     const Component = tag;
@@ -87,6 +103,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
         className={cn("editable-field resize-none overflow-hidden", className)}
         rows={1}
         disabled={disabled}
+        placeholder={placeholder}
       />
     );
   }
@@ -100,6 +117,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
       onPaste={handlePaste}
       className={cn("editable-field", className)}
       disabled={disabled}
+      placeholder={placeholder}
     />
   );
 };
