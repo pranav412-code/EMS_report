@@ -84,7 +84,9 @@ export default function ReportHeader({ data, updateField }: ReportHeaderProps) {
           </PopoverContent>
         </Popover>
 
-        <div className="badge">MSEDCL • OA</div>
+        <div className="badge">
+          <EditableField id="reportTags" value={data.reportTags} onChange={updateField} />
+        </div>
       </div>
     </div>
   );

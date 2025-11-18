@@ -15,6 +15,7 @@ export const initialReportState: ReportState = {
   subTitle: 'Cost audit & verification of electricity bills (MSEDCL & Open Access)',
   clientName: 'Client Name',
   clientLocation: 'Nagpur',
+  reportTags: 'MSEDCL • OA',
   period: {
     from: initialFromDate,
     to: initialToDate,
