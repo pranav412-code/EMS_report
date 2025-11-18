@@ -75,7 +75,7 @@
 
   .report-header {
     background: linear-gradient(90deg, hsl(var(--primary)), #2c6bc2);
-    @apply text-primary-foreground p-6 flex flex-wrap gap-4 items-start;
+    @apply text-primary-foreground p-6 flex flex-col gap-4 items-start;
   }
 
   .report-header h1 {
@@ -83,7 +83,7 @@
   }
   
   .report-header .right {
-    @apply ml-auto flex gap-2 flex-wrap items-center;
+    @apply flex gap-2 flex-wrap items-center;
   }
   
   .badge {
@@ -250,6 +250,9 @@
   }
   .tag button:hover {
       @apply text-primary-foreground;
+  }
+   .tag #date, .tag #date:hover {
+    @apply bg-card text-card-foreground border-border;
   }
 
   .report-footer {

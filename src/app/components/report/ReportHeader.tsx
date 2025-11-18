@@ -63,7 +63,7 @@ export default function ReportHeader({ data, updateField }: ReportHeaderProps) {
               id="date"
               variant={"outline"}
               className={cn(
-                "tag h-auto justify-start text-left font-normal",
+                "tag h-auto justify-start text-left font-normal !text-black",
                 !date && "text-muted-foreground"
               )}
             >
