@@ -26,9 +26,11 @@ const EditableField: React.FC<EditableFieldProps> = ({
 }) => {
   const ref = useRef<any>(null);
 
+  const isContentEditable = type === 'richtext' || (type === 'text' && tag !== 'div');
+
   const handleInput = (e: React.FormEvent<HTMLElement>) => {
     if (disabled) return;
-    const newValue = type === 'richtext' ? e.currentTarget.innerHTML : e.currentTarget.innerText;
+    const newValue = e.currentTarget.innerHTML;
     onChange(id, newValue);
   };
   
@@ -47,12 +49,12 @@ const EditableField: React.FC<EditableFieldProps> = ({
   
   // This is needed to prevent cursor jumping in contentEditable elements
   useEffect(() => {
-      if (ref.current && (type === 'richtext' || (type === 'text' && tag !== 'div')) ) {
+      if (ref.current && isContentEditable) {
         if (ref.current.innerHTML !== value) {
             ref.current.innerHTML = value;
         }
     }
-  }, [value, type, tag]);
+  }, [value, isContentEditable]);
 
 
   // Handle paste as plain text
@@ -75,7 +77,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
     }
   };
 
-  if (type === 'richtext' || (type === 'text' && tag !== 'div')) {
+  if (isContentEditable) {
       const Component = tag;
       return (
         <Component
