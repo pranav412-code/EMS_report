@@ -120,42 +120,44 @@ export default function ReportPage() {
         <ReportHeader data={reportData} updateField={updateField} />
         <MetaBar data={reportData} updateField={updateField} />
         
-        {sections.map(section => {
-          const Component = componentMap[section.component as keyof typeof componentMap];
-          
-          return (
-            <div 
-              key={section.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, section.id)}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, section.id)}
-              className="draggable-section relative group/section"
-            >
-              <div className="drag-handle">
-                <GripVertical size={20} />
-              </div>
-
-              {section.isDeletable && (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute top-4 right-4 z-10 h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive opacity-0 group-hover/section:opacity-100 transition-opacity"
-                  onClick={() => deleteSection(section.id)}
-                  aria-label="Delete section"
+        <div className='report-body'>
+            {sections.map(section => {
+            const Component = componentMap[section.component as keyof typeof componentMap];
+            
+            return (
+                <div 
+                key={section.id}
+                draggable
+                onDragStart={(e) => handleDragStart(e, section.id)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, section.id)}
+                className="draggable-section relative group/section"
                 >
-                    <Trash2 size={16}/>
-                </Button>
-              )}
+                <div className="drag-handle">
+                    <GripVertical size={20} />
+                </div>
 
-              <Component 
-                data={reportData} 
-                updateField={updateField}
-                {...section.props}
-              />
-            </div>
-          )
-        })}
+                {section.isDeletable && (
+                    <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute top-4 right-4 z-10 h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive opacity-0 group-hover/section:opacity-100 transition-opacity"
+                    onClick={() => deleteSection(section.id)}
+                    aria-label="Delete section"
+                    >
+                        <Trash2 size={16}/>
+                    </Button>
+                )}
+
+                <Component 
+                    data={reportData} 
+                    updateField={updateField}
+                    {...section.props}
+                />
+                </div>
+            )
+            })}
+        </div>
 
         <div className="p-5 flex justify-center border-t">
             <DropdownMenu>

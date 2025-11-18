@@ -16,8 +16,8 @@ export default function ActionBar({ onReset, reportRef }: ActionBarProps) {
   const { toast } = useToast();
 
   const handleDownload = async () => {
-    const reportElement = reportRef.current;
-    if (!reportElement) {
+    const reportContainer = reportRef.current;
+    if (!reportContainer) {
       toast({
         title: "Error",
         description: "Could not find report content to download.",
@@ -31,34 +31,30 @@ export default function ActionBar({ onReset, reportRef }: ActionBarProps) {
         description: "Please wait while your report is being generated. This may take a moment.",
     });
 
-    // Temporarily hide elements that shouldn't be in the PDF
-    const elementsToHide = reportElement.querySelectorAll('.chart-tools, .ai-insights-btn, [data-hide-print="true"]');
-    elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
+    const originalBackgroundColor = reportContainer.style.backgroundColor;
+    reportContainer.style.backgroundColor = 'white';
 
+    // Temporarily hide elements that shouldn't be in the PDF
+    const elementsToHide = reportContainer.querySelectorAll('.drag-handle, .chart-tools, .ai-insights-btn, [data-hide-print="true"]');
+    elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
+    
+    // Replace textareas with divs for rendering
+    const textareas = reportContainer.querySelectorAll('textarea');
+    const originalTextareas: { parent: ParentNode; nextSibling: Node | null; textarea: HTMLTextAreaElement }[] = [];
+    textareas.forEach(textarea => {
+      const div = document.createElement('div');
+      div.innerText = textarea.value;
+      div.style.whiteSpace = 'pre-wrap';
+      div.style.wordWrap = 'break-word';
+      div.style.width = `${textarea.clientWidth}px`;
+      div.style.minHeight = `${textarea.clientHeight}px`;
+      div.className = textarea.className;
+      div.classList.add('printable-div');
+      originalTextareas.push({ parent: textarea.parentNode!, nextSibling: textarea.nextSibling, textarea });
+      textarea.parentNode!.replaceChild(div, textarea);
+    });
+    
     try {
-      const canvas = await html2canvas(reportElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        onclone: (document) => {
-          // On clone, find all textareas and replace them with divs showing their value
-          // This ensures the text is rendered correctly in the canvas
-          document.querySelectorAll('textarea').forEach(textarea => {
-            const div = document.createElement('div');
-            div.innerText = textarea.value;
-            // Copy relevant styles
-            div.style.whiteSpace = 'pre-wrap';
-            div.style.wordWrap = 'break-word';
-            div.style.width = `${textarea.clientWidth}px`;
-            div.style.height = `${textarea.clientHeight}px`;
-            div.className = textarea.className;
-            textarea.parentNode?.replaceChild(div, textarea);
-          });
-        }
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
-      
       const pdf = new jsPDF({
         orientation: 'p',
         unit: 'mm',
@@ -67,19 +63,34 @@ export default function ActionBar({ onReset, reportRef }: ActionBarProps) {
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
       
-      const ratio = imgWidth / pdfWidth;
-      const canvasHeightInPdf = imgHeight / ratio;
-      const totalPages = Math.ceil(canvasHeightInPdf / pdfHeight);
+      const sections = reportContainer.querySelectorAll<HTMLElement>('.report-header, .meta-bar, .report-section');
+      let yOffset = 0;
 
-      for (let i = 0; i < totalPages; i++) {
-        if (i > 0) {
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        
+        const canvas = await html2canvas(section, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            windowWidth: reportContainer.scrollWidth,
+            windowHeight: reportContainer.scrollHeight,
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = imgWidth / pdfWidth;
+        const imgHeightInPdf = imgHeight / ratio;
+
+        if (yOffset + imgHeightInPdf > pdfHeight) {
           pdf.addPage();
+          yOffset = 0;
         }
-        const yPos = -pdfHeight * i;
-        pdf.addImage(imgData, 'PNG', 0, yPos, pdfWidth, canvasHeightInPdf);
+
+        pdf.addImage(imgData, 'PNG', 0, yOffset, pdfWidth, imgHeightInPdf);
+        yOffset += imgHeightInPdf;
       }
       
       pdf.save('energy-bill-audit-report.pdf');
@@ -99,6 +110,15 @@ export default function ActionBar({ onReset, reportRef }: ActionBarProps) {
     } finally {
       // Restore hidden elements
       elementsToHide.forEach(el => (el as HTMLElement).style.display = '');
+      
+      // Restore textareas
+      reportContainer.querySelectorAll('.printable-div').forEach(div => div.remove());
+      originalTextareas.forEach(({ parent, nextSibling, textarea }) => {
+        parent.insertBefore(textarea, nextSibling);
+      });
+      
+      // Restore original background color
+      reportContainer.style.backgroundColor = originalBackgroundColor;
     }
   };
 
