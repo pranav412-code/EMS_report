@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ----------- BASE TOKENS ----------- */
 @layer base {
   :root {
     --background: 225 43% 97%;
@@ -30,6 +31,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 220 13% 10%;
     --foreground: 0 0% 98%;
@@ -57,17 +59,21 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   h2 {
     @apply text-lg font-bold text-primary;
   }
+
   h3 {
     @apply text-base font-semibold;
   }
 }
 
+/* ----------- COMPONENTS ----------- */
 @layer components {
   .report-container {
     @apply max-w-7xl mx-auto my-6 bg-card shadow-lg rounded-2xl overflow-hidden;
@@ -81,11 +87,11 @@
   .report-header h1 {
     @apply text-2xl font-bold m-0 mb-1.5;
   }
-  
+
   .report-header .right {
     @apply flex gap-2 flex-wrap items-center;
   }
-  
+
   .badge {
     @apply bg-card text-primary rounded-full px-2.5 py-1.5 font-bold text-xs;
   }
@@ -95,17 +101,21 @@
   }
 
   .meta-bar .logo-col {
-      @apply w-full md:w-32;
+    @apply w-full md:w-32;
   }
+
   .meta-bar .details-col {
-      @apply flex-1 flex flex-col gap-y-2 justify-center;
+    @apply flex-1 flex flex-col gap-y-2 justify-center;
   }
+
   .meta-bar .item {
     @apply flex items-start gap-2 text-sm;
   }
+
   .meta-bar .label {
     @apply font-semibold text-slate-700 whitespace-nowrap;
   }
+
   .meta-bar .value-col {
     @apply flex-1;
   }
@@ -113,6 +123,7 @@
   .report-section {
     @apply p-5 border-b;
   }
+
   .report-section:last-of-type {
     @apply border-b-0;
   }
@@ -124,18 +135,19 @@
   .draggable-section[data-locked='true']:hover .section-controls {
     @apply opacity-100;
   }
-  
+
   .draggable-section[data-locked='true'] {
-     @apply bg-secondary/30;
+    @apply bg-secondary/30;
   }
 
   .drag-handle {
     @apply cursor-move text-muted-foreground p-1;
   }
+
   .drag-handle:hover {
-      @apply text-foreground;
+    @apply text-foreground;
   }
-  
+
   .report-section h2 {
     @apply mb-3 flex items-center gap-2;
   }
@@ -171,13 +183,15 @@
   .grid-2 {
     @apply grid grid-cols-1 md:grid-cols-2 gap-4;
   }
+
   .grid-2.equal {
     @apply md:grid-cols-2;
   }
+
   .grid-3 {
     @apply grid grid-cols-1 md:grid-cols-3 gap-3;
   }
-  
+
   .chart-card {
     @apply bg-card border rounded-xl p-3.5 min-h-[120px] relative;
   }
@@ -189,6 +203,7 @@
   .subgrid {
     @apply grid grid-cols-1 lg:grid-cols-2 gap-3;
   }
+
   .subgrid-3 {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3;
   }
@@ -197,13 +212,16 @@
     border: 2px dashed hsl(var(--primary) / 0.2);
     @apply rounded-lg min-h-[220px] flex items-center justify-center p-3 bg-primary/5 overflow-hidden relative transition-colors;
   }
+
   .chart-slot.small {
     @apply min-h-[140px];
   }
+
   .chart-slot.drag-over {
     background: hsl(var(--primary) / 0.1);
     border-color: hsl(var(--primary) / 0.5);
   }
+
   .chart-slot img {
     @apply max-w-full max-h-full block m-auto object-contain;
   }
@@ -211,12 +229,15 @@
   .chart-tools {
     @apply absolute right-2.5 top-2.5 flex gap-2;
   }
+
   .chart-tools .btn {
     @apply h-auto;
   }
+
   .chart-tools .btn.danger {
     @apply bg-destructive/10 border-destructive/20 text-destructive;
   }
+
   .chart-tools .btn.danger:hover {
     @apply bg-destructive/20;
   }
@@ -233,46 +254,56 @@
     @apply bg-yellow-50/80 ring-2 ring-yellow-400 rounded-sm;
   }
 
-  .tag {
-    @apply inline-flex items-center gap-1.5 bg-primary/10 text-primary-foreground border border-primary-foreground/30 rounded-full px-2.5 py-1 text-xs font-medium transition-colors hover:bg-primary/20;
-  }
+.tag {
+  @apply inline-flex items-center justify-center gap-1.5 bg-primary/10 text-primary-foreground border border-primary-foreground/30 rounded-full px-4 py-2 text-xs font-medium min-h-8 overflow-visible;
+  transform: translateZ(0);
+}
   .tag .editable-field {
     @apply placeholder:text-primary-foreground/50 text-primary-foreground;
   }
+
   .tag:has(button) {
     @apply p-0;
   }
+
   .tag button {
     @apply text-primary-foreground bg-transparent border-transparent hover:bg-primary/20;
   }
+
   .tag button.tag {
     @apply border-primary-foreground/30 px-2.5;
   }
+
   .tag button:hover {
-      @apply text-primary-foreground;
+    @apply text-primary-foreground;
   }
-   .tag #date, .tag #date:hover {
+
+  .tag #date,
+  .tag #date:hover {
     @apply bg-card text-card-foreground border-border;
   }
 
   .report-footer {
     @apply p-4 px-5 bg-slate-100 text-slate-500 text-xs text-center;
   }
-  
+
+  /* Hide editor-only controls when we are preparing/printing PDF via class */
   .printing-pdf .section-controls,
   .printing-pdf .add-section-container,
   .printing-pdf .block-toolbar,
   .printing-pdf .add-block-btn,
   .printing-pdf .chart-tools,
-  .printing-pdf *[data-hide-print="true"] {
-      display: none !important;
+  .printing-pdf *[data-hide-print='true'] {
+    display: none !important;
   }
 }
 
+/* ----------- PRINT RULES ----------- */
 @media print {
   body {
     background: #fff;
   }
+
   .report-container {
     box-shadow: none;
     border-radius: 0;
@@ -280,21 +311,86 @@
     max-width: 100%;
     border: none;
   }
+
   .action-bar {
     display: none !important;
   }
+
   .report-section {
     page-break-inside: avoid;
   }
-  .chart-card, .kpi {
+
+  .chart-card,
+  .kpi {
     page-break-inside: avoid;
   }
-   .section-controls,
+
+  .section-controls,
   .add-section-container,
   .block-toolbar,
   .add-block-btn,
   .chart-tools,
-  *[data-hide-print="true"] {
-      display: none !important;
+  *[data-hide-print='true'] {
+    display: none !important;
   }
+}
+
+@media print {
+  @page { margin: 0; }
+  body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  [data-hide-print], .section-controls, .add-section-container, .action-bar {
+    display: none !important;
+  }
+  .report-container {
+    background: white !important;
+  }
+}
+
+/* Force background colors */
+.report-header {
+  -webkit-print-color-adjust: exact !important;
+  background: #1e40af !important; /* your blue */
+}
+
+/* ============ PERFECT PDF HEADER – FINAL FIX (2025) ============ */
+
+/* 1. Remove extra top space caused by flex gaps & margins */
+.report-header {
+  @apply p-6 pt-8 pb-10 gap-6;        /* increase bottom padding a bit */
+  margin-top: 0 !important;
+  padding-top: 2rem !important;       /* forces consistent top spacing */
+}
+
+/* 2. Force ALL tags (including date) to render perfectly in PDF */
+.report-header .tag,
+.report-header .tag *,
+.report-header [role="button"],
+.report-header button {
+  overflow: visible !important;
+  min-height: 36px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  line-height: 1.4 !important;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* 3. Special fix for the Date Range button (the one that disappears) */
+.report-header #date,
+.report-header button:has(.lucide-calendar) {
+  background: white !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+  min-height: 38px !important;
+  overflow: visible !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+/* 4. Ensure the calendar icon shows in PDF */
+.report-header .lucide-calendar {
+  color: #1e293b !important;
 }

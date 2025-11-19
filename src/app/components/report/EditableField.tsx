@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import React, { useRef, useEffect, forwardRef } from "react";
+import React, { useRef, useEffect, useLayoutEffect, forwardRef } from "react";
 
 type EditableFieldProps = {
   id: string;
@@ -36,7 +36,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
       onChange(id, newValue);
     }
   };
-  
+
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (disabled) return;
     onChange(id, e.target.value);
@@ -49,12 +49,12 @@ const EditableField: React.FC<EditableFieldProps> = ({
       ref.current.style.height = `${ref.current.scrollHeight}px`;
     }
   }, [value, type]);
-  
+
   // This is needed to prevent cursor jumping in contentEditable elements
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (ref.current && isContentEditable) {
       if (ref.current.innerHTML !== value) {
-          ref.current.innerHTML = value;
+        ref.current.innerHTML = value;
       }
     }
   }, [value, isContentEditable]);
@@ -67,7 +67,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
     const text = e.clipboardData.getData("text/plain");
 
     if (ref.current && ref.current.isContentEditable) {
-        document.execCommand("insertText", false, text);
+      document.execCommand("insertText", false, text);
     } else if (ref.current) {
       const start = ref.current.selectionStart;
       const end = ref.current.selectionEnd;
@@ -76,24 +76,23 @@ const EditableField: React.FC<EditableFieldProps> = ({
       // Move cursor after pasted text
       setTimeout(() => {
         if (ref.current) {
-            ref.current.selectionStart = ref.current.selectionEnd = start + text.length;
+          ref.current.selectionStart = ref.current.selectionEnd = start + text.length;
         }
       }, 0);
     }
   };
 
   if (isContentEditable) {
-      const Component = tag;
-      return (
-        <Component
-          ref={ref}
-          contentEditable={!disabled}
-          suppressContentEditableWarning
-          onInput={handleInput}
-          onPaste={handlePaste}
-          className={cn("editable-field", disabled && "cursor-not-allowed", className)}
-          dangerouslySetInnerHTML={{ __html: value }}
-        />
+    const Component = tag as React.ElementType;
+    return (
+      <Component
+        ref={ref}
+        contentEditable={!disabled}
+        suppressContentEditableWarning
+        onInput={handleInput}
+        onPaste={handlePaste}
+        className={cn("editable-field", disabled && "cursor-not-allowed", className)}
+      />
     );
   }
 

@@ -31,6 +31,7 @@ export default function ReportHeader({ data, updateField }: ReportHeaderProps) {
   }
 
   return (
+    
     <div className="report-header">
       <div className="flex items-center gap-4">
         <ImageSlot
@@ -56,17 +57,35 @@ export default function ReportHeader({ data, updateField }: ReportHeaderProps) {
         <div className="tag">
           <EditableField id="clientLocation" value={data.clientLocation} onChange={updateField} />
         </div>
-        
+
+        <div className="print-only tag h-auto justify-start text-left font-normal !text-black bg-card text-card-foreground border-border hidden">
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date?.from ? (
+            date.to ? (
+              <>
+                {format(date.from, "LLL dd, y")} -{" "}
+                {format(date.to, "LLL dd, y")}
+              </>
+            ) : (
+              format(date.from, "LLL dd, y")
+            )
+          ) : (
+            <span>Pick a date range</span>
+          )}
+        </div>
+
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              id="date"
-              variant={"outline"}
-              className={cn(
-                "tag h-auto justify-start text-left font-normal !text-black",
-                !date && "text-muted-foreground"
-              )}
-            >
+<Button
+  id="date"
+  variant={"outline"}
+  data-hide-print="true"
+  className={cn(
+    "tag h-auto justify-start text-left font-normal !bg-white !text-slate-800 border",
+    "!min-h-9 whitespace-nowrap",
+    !date && "text-muted-foreground"
+  )}
+>
               <CalendarIcon className="mr-2 h-4 w-4" />
               {date?.from ? (
                 date.to ? (
@@ -97,7 +116,7 @@ export default function ReportHeader({ data, updateField }: ReportHeaderProps) {
         <div className="tag">
           <EditableField id="reportTags" value={data.reportTags} onChange={updateField} />
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
